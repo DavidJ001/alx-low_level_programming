@@ -1,8 +1,9 @@
-#ifndef MAIN_H
-#define MAIN_H
-
+#ifndef OBJECT_LIKE_MACRO_H
+#define OBJECT_LIKE_MACRO_H
 #define SIZE 1024
-int _putchar(char c);
+typedef int make_iso_compilers_happy;
 
 #endif
-// king David is awesome! Don't fork, Kindly just download the repo if you have to
+/*King David is Awesome! Do not fork. Just download the repo!
+ * 
+ */

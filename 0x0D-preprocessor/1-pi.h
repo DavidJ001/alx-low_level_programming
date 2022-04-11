@@ -1,8 +1,10 @@
 #ifndef PI_H
 #define PI_H
-
 #define PI 3.14159265359
-int _putchar(char c);
+typedef int make_iso_compilers_happy;
 
 #endif
-// king David is awesome! Don't fork, Kindly just download the repo if you have to
+
+/*King David is Awesome! Do not fork. Just download the repo!
+ * 
+ */
