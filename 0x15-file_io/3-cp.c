@@ -1,51 +1,76 @@
 #include "main.h"
-
-#define MAXSIZE 1024
-#define E STDERR_FILENO
-
 /**
- * main - copy file content into another file
- * @argc: integer, number of arguments
- * @v: pointer to an array of string pointers
- *
- * Return: 0 on success | 97, if less arguments given | 98, if file_from fails
- * | 99, if write to file_to fails | 100, if file descriptor can not close
- */
-int main(int argc, char *v[])
+  * condi_from - fills memory with a constant byte
+  * @file_from: is the size of the pointer
+  * Return: a int
+  */
+void condi_from(char *file_from)
 {
-	int fd1, fd2;
-	char *buff[MAXSIZE];
-	ssize_t bytes;
-	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH;
+	dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", file_from);
+	exit(98);
+}
+/**
+  * condi_to - fills memory with a constant byte
+  * @file_to: is the size of the pointer
+  * Return: a int
+  */
+void condi_to(char *file_to)
+{
+	dprintf(STDERR_FILENO, "Error: Can't write to %s\n", file_to);
+	exit(99);
+}
+/**
+  * condi_fd - fills memory with a constant byte
+  * @file: is the size of the pointer
+  * Return: a int
+  */
+void condi_fd(char *file)
+{
+	dprintf(STDERR_FILENO, "Error: Can't close fd %s\n", file);
+	exit(100);
+}
+/**
+  * main - fills memory with a constant byte
+  * @argc: is the size of the pointer
+  * @argv: a index
+  * Return: a int
+  */
+
+int main(int argc, char **argv)
+{
+	int fd1 = 0, fd2 = 0, rd1 = 0, wr2 = 0;
+	char *file_from, *file_to, buffer[1024];
 
 	if (argc != 3)
-		dprintf(E, "Usage: cp file_from file_to\n"), exit(97);
-
-	fd1 = open(v[1], O_RDONLY);
-	if (fd1 < 0)
-		dprintf(E, "Error: Can't read from file %s\n", v[1]), exit(98);
-
-	fd2 = open(v[2], O_WRONLY | O_TRUNC | O_CREAT, mode);
-	if (fd2 < 0)
-		dprintf(E, "Error: Can't write to %s\n", v[2]), exit(99);
-
-	while ((bytes = read(fd1, buff, MAXSIZE - 1)) > 0)
 	{
-		buff[bytes] = '\0';
-		if (write(fd2, buff, bytes) != bytes)
-		{
-			dprintf(E, "Error: Can't write to %s\n", v[2]);
-			exit(99);
-		}
+		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
+		exit(97);
+	}
+	file_from = argv[1];
+	file_to = argv[2];
+
+	fd1 = open(file_from, O_RDONLY);
+	if (fd1 == -1)
+		condi_from(file_from);
+
+	fd2 = open(file_to, O_WRONLY | O_CREAT | O_TRUNC, 0664);
+	if (fd2 == -1)
+		condi_to(file_to);
+
+	for (rd1 = read(fd1, buffer, 1024); rd1 > 0; rd1 = read(fd1, buffer, 1024))
+	{
+		wr2 = write(fd2, buffer, rd1);
+		if (wr2 == -1)
+			condi_to(file_to);
 	}
 
-	if (bytes < 0)
-		dprintf(E, "Error: Can't read from file %s\n", v[1]), exit(98);
+	if (rd1 == -1)
+		condi_from(file_from);
 
-	if ((close(fd1)) < 0)
-		dprintf(E, "Error: Can't close fd %d\n", fd1), exit(100);
-	if ((close(fd2)) < 0)
-		dprintf(E, "Error: Can't close fd %d\n", fd2), exit(100);
+	if (close(fd1) == -1)
+		condi_fd(file_from);
 
+	if (close(fd2) == -1)
+		condi_fd(file_to);
 	return (0);
 }
