@@ -1,1 +1,1 @@
-# shared library
+Dynamic libraries in C
